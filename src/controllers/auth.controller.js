@@ -37,9 +37,13 @@ module.exports.signin = (req, res) => {
     if (err) return res.status(400).json({ err });
     if (user) {
       if (user.authenticate(req.body.password)) {
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_KEY, {
-          expiresIn: "1h",
-        });
+        const token = jwt.sign(
+          { _id: user._id, role: user.role },
+          process.env.JWT_KEY,
+          {
+            expiresIn: "1h",
+          }
+        );
         const { _id, firstName, lastName, email, role, fullName } = user;
         res.status(200).json({
           token,
@@ -52,11 +56,4 @@ module.exports.signin = (req, res) => {
       return res.status(400).json({ message: "SomeThing went wrong!!" });
     }
   });
-};
-
-module.exports.requireSignin = (req, res, next) => {
-  const token = req.headers.authorization.split(" ").trim();
-  const user = jwt.verify(token, process.env.JWT_KEY);
-  req.user = user;
-  next();
 };

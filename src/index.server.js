@@ -1,6 +1,5 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose").set("strictQuery", false);
 const app = express();
@@ -8,6 +7,9 @@ const app = express();
 //routes
 const authRoute = require("./routes/auth.route");
 const adminRoute = require("./routes/admin/auth.route");
+const categoryRoute = require("./routes/category.route");
+const productRoute = require("./routes/product.route");
+const cartRoute = require("./routes/cart.route");
 
 // environment varriable
 dotenv.config();
@@ -16,6 +18,9 @@ app.use(express.json());
 app.use(cors());
 app.use("/api", authRoute);
 app.use("/api", adminRoute);
+app.use("/api", categoryRoute);
+app.use("/api", productRoute);
+app.use("/api", cartRoute);
 
 // mongodb connection
 //mongodb+srv://flipCart:<password>@cluster0.nrlso9h.mongodb.net/?retryWrites=true&w=majority
