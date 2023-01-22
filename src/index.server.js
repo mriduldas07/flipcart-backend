@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const mongoose = require("mongoose").set("strictQuery", false);
 const app = express();
+const path = require("path");
 
 //routes
 const authRoute = require("./routes/auth.route");
@@ -15,6 +16,7 @@ const cartRoute = require("./routes/cart.route");
 dotenv.config();
 
 app.use(express.json());
+app.use("/public", express.static(path.join(__dirname, "/uploads")));
 app.use(cors());
 app.use("/api", authRoute);
 app.use("/api", adminRoute);

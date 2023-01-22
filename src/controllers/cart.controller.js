@@ -7,35 +7,34 @@ exports.addItemToCart = (req, res) => {
       const isItemAdded = cart.cartItems.find(
         (c) => c.product == req.body.cartItems.product
       );
+      let condition, update;
       if (isItemAdded) {
-        Cart.findOneAndUpdate(
-          {
-            user: req.user._id,
-            "cartItems.product": req.body.cartItems.product,
-          },
-          {
-            $set: {
-              cartItems: {
-                ...req.body.cartItems,
-                quantity: isItemAdded.quantity + req.body.cartItems.quantity,
-              },
+        condition = {
+          user: req.user._id,
+          "cartItems.product": req.body.cartItems.product,
+        };
+        update = {
+          $set: {
+            "cartItems.$": {
+              ...req.body.cartItems,
+              quantity: isItemAdded.quantity + req.body.cartItems.quantity,
             },
-          }
-        ).exec((err, _cart) => {
+          },
+        };
+        Cart.findOneAndUpdate(condition, update).exec((err, _cart) => {
           if (err) return res.status(400).json({ err });
           if (_cart) {
             return res.status(200).json({ _cart });
           }
         });
       } else {
-        Cart.findOneAndUpdate(
-          { user: req.user._id },
-          {
-            $push: {
-              cartItems: req.body.cartItems,
-            },
-          }
-        ).exec((err, _cart) => {
+        condition = { user: req.user._id };
+        update = {
+          $push: {
+            cartItems: req.body.cartItems,
+          },
+        };
+        Cart.findOneAndUpdate(condition, update).exec((err, _cart) => {
           if (err) return res.status(400).json({ err });
           if (_cart) {
             return res.status(200).json({ _cart });
